@@ -1,12 +1,14 @@
 # app.py
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 
-# Import LangChain components
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -14,7 +16,7 @@ from langchain_core.output_parsers import StrOutputParser
 # --- APP AND DATABASE CONFIGURATION ---
 basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-default-fallback-secret-key-for-development')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'users.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -23,9 +25,10 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
 # --- API AND MODEL CONFIGURATION ---
-ADZUNA_APP_ID = os.environ.get("631767ae")
-ADZUNA_APP_KEY = os.environ.get("a277831d59f1cb89f7a7fe9cf20d62c5")
-GOOGLE_API_KEY = os.environ.get("AIzaSyC07k2BYqL5-VE4XkRU9NvMq2uIORfAq7c")
+# CORRECTED: These lines now correctly reference the variable names.
+ADZUNA_APP_ID = os.environ.get("ADZUNA_APP_ID")
+ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 # --- LANGCHAIN SETUP ---
 llm_chain = None
@@ -135,10 +138,8 @@ def ai_search():
         print(f"An error occurred during AI search: {e}")
         return render_template('results.html', error="Could not process your search via AI.")
 
-# Initialize the database
 with app.app_context():
     db.create_all()
 
-# The following is for local development only
 if __name__ == '__main__':
     app.run(debug=True)

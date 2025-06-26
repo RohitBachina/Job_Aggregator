@@ -6,3 +6,4 @@ werkzeug
 langchain
 langchain-google-genai
 gunicorn
+python-dotenv
