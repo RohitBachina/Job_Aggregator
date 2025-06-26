@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">JobFinder</div>
+        <nav class="header-nav">
+            <span class="welcome-user">Welcome, {{ current_user.username }}</span>
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+            </button>
+            <a href="{{ url_for('profile') }}" class="profile-link">👤</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </nav>
+    </header>
+
+    <div class="main-container results-page">
+        <div class="title-section">
+            {% if not error %}
+                <h1>Showing results for: <strong>"{{ query }}"</strong></h1>
+                {% if location %}
+                    <p>in "{{ location }}"</p>
+                {% endif %}
+            {% else %}
+                 <h1>An Error Occurred</h1>
+            {% endif %}
+            <a href="/" class="back-link">← New Search</a>
+        </div>
+
+        <!-- This is the main container for the widespread cards -->
+        <div class="results-grid-wrapper">
+            <div class="results-container">
+                {% if error %}
+                    <div class="job-card error-card">
+                        <h2>Error</h2>
+                        <p>{{ error }}</p>
+                    </div>
+                {% elif jobs %}
+                    {% for job in jobs %}
+                        <div class="job-card">
+                            <div class="job-card-header">
+                                <h2 class="job-title">{{ job.title }}</h2>
+                                <h3 class="job-company">{{ job.company.display_name }}</h3>
+                                <p class="job-location">{{ job.location.display_name }}</p>
+                            </div>
+                            <div class="job-card-body">
+                                <p class="job-description">{{ job.description | striptags | truncate(200) }}</p>
+                            </div>
+                            <div class="job-card-footer">
+                                <a href="{{ job.redirect_url }}" target="_blank" class="apply-button">View & Apply</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="job-card error-card full-width-card">
+                        <h2>No Results Found</h2>
+                        <p>We couldn't find any jobs matching your search. Try broadening your terms.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            body.classList.toggle('dark-mode', savedTheme === 'dark');
+        };
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+        document.addEventListener('DOMContentLoaded', applyTheme);
+    </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">JobFinder</div>
+        <nav class="header-nav">
+            <span class="welcome-user">Welcome, {{ current_user.username }}</span>
+            <button id="theme-toggle" class="theme-toggle-btn"><span class="icon-sun">☀️</span><span class="icon-moon">🌙</span></button>
+            <a href="{{ url_for('profile') }}" class="profile-link">👤</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </nav>
+    </header>
+
+    <div class="particle-container">
+        {% for i in range(50) %}<div class="particle"></div>{% endfor %}
+    </div>
+
+    <div class="main-container">
+        <div class="title-section">
+            <div class="valued-phrase">Your Journey Starts Here</div>
+            <h1>Find Your Next Opportunity</h1>
+        </div>
+
+        <div class="search-wrapper">
+            <!-- Search Tabs -->
+            <div class="search-tabs">
+                <button class="tab-link active" data-tab="keyword-search">Keyword Search</button>
+                <button class="tab-link" data-tab="ai-search">✨ AI Assistant</button>
+            </div>
+
+            <!-- Keyword Search Form -->
+            <div id="keyword-search" class="search-content active">
+                <form class="search-form" action="/search" method="post">
+                    <div class="search-field">
+                        <label for="keyword">Job Role / Keyword</label>
+                        <input type="text" id="keyword" name="search_query" placeholder="e.g., Software Engineer">
+                    </div>
+                    <div class="search-field">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., London, Remote">
+                    </div>
+                    <button type="submit" class="search-button">Search</button>
+                </form>
+            </div>
+
+            <!-- AI Assistant Search Form -->
+            <div id="ai-search" class="search-content">
+                <form class="search-form" action="/ai-search" method="post" id="ai-search-form">
+                     <p class="ai-description">Describe your ideal job, and our AI will find it for you.</p>
+                    <div class="search-field descriptive-field">
+                        <textarea id="descriptive_query" name="descriptive_query" rows="3" placeholder="e.g., I'm a senior data scientist looking for a remote position in the healthcare industry..."></textarea>
+                    </div>
+                    <button type="submit" class="search-button">
+                        <span class="search-text">Find with AI</span>
+                        <div class="loader" style="display: none;"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Tab Switching Logic ---
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const searchContents = document.querySelectorAll('.search-content');
+        tabLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                tabLinks.forEach(l => l.classList.remove('active'));
+                searchContents.forEach(c => c.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById(link.dataset.tab).classList.add('active');
+            });
+        });
+
+        // --- Theme Toggle Logic ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            body.classList.toggle('dark-mode', savedTheme === 'dark');
+        };
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+        document.addEventListener('DOMContentLoaded', applyTheme);
+
+        // --- AI Search Loader ---
+        const aiSearchForm = document.getElementById('ai-search-form');
+        aiSearchForm.addEventListener('submit', () => {
+            const button = aiSearchForm.querySelector('.search-button');
+            button.querySelector('.search-text').style.display = 'none';
+            button.querySelector('.loader').style.display = 'block';
+            button.disabled = true;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo">
+            <a href="{{ url_for('home') }}" style="text-decoration: none; color: inherit;">JobFinder</a>
+        </div>
+        <nav class="header-nav">
+            <button id="theme-toggle" class="theme-toggle-btn">
+                <span class="icon-sun">☀️</span>
+                <span class="icon-moon">🌙</span>
+            </button>
+            <a href="{{ url_for('profile') }}" class="profile-link">👤</a>
+            <a href="{{ url_for('logout') }}" class="logout-link">Logout</a>
+        </nav>
+    </header>
+
+    <div class="main-container">
+        <div class="profile-box">
+            <h2>Your Profile</h2>
+            <div class="profile-info">
+                <p><strong>Username:</strong> {{ user.username }}</p>
+            </div>
+            <a href="{{ url_for('home') }}" class="back-link-profile">← Back to Search</a>
+        </div>
+    </div>
+
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const applyTheme = () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+        };
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+        document.addEventListener('DOMContentLoaded', applyTheme);
+    </script>
+</body>
+</html>
